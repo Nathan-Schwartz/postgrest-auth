@@ -1,5 +1,7 @@
 var _ = require("lodash");
+var cors = require('cors');
 var express = require("express");
+const { ValidationError } = require("express-validation");
 var logger = require("morgan");
 var bodyParser = require("body-parser");
 var bearerToken = require("express-bearer-token");
@@ -7,6 +9,8 @@ var HttpStatus = require("http-status-codes");
 
 var app = express();
 
+app.options('*', cors()) // include before other routes
+app.use(cors());
 app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -30,6 +34,9 @@ app.use(function(req, res, next) {
 // error handler
 app.use(function(err, req, res, next) {
   console.error(err);
+  if (err instanceof ValidationError) {
+    return res.status(err.statusCode).json(err)
+  }
 
   err.status = err.status || 500;
   err.statusText = err.statusText || HttpStatus.getStatusText(err.status);

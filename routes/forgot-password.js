@@ -1,7 +1,7 @@
 const config = require("../config/config");
 const createToken = require("../src/create-token");
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const knex = require("../src/knex");
 const transporter = require("../src/transporter");
@@ -10,9 +10,9 @@ const express = require("express");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     username: validations.username.required()
-  }
+  })
 };
 
 router.post("/forgot_password", validate(schema), async function(
@@ -24,6 +24,11 @@ router.post("/forgot_password", validate(schema), async function(
     let user = await knex(`${config.db.schema}.${config.db.table}`)
       .where({ username_lowercase: req.body.username.toLowerCase() })
       .first("*");
+
+    if (!user) {
+      // Don't allow people to crawl usernames
+      return res.status(200).send({ message: "Password reset email sent" });
+    }
 
     let mailOptions = {
       from: `"${config.app_name}" <${config.email.from}>`,

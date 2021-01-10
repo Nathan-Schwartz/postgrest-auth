@@ -1,7 +1,7 @@
 const config = require("../config/config");
 const createToken = require("../src/create-token");
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const jwt = require("jsonwebtoken");
 const knex = require("../src/knex");
@@ -10,10 +10,10 @@ const express = require("express");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     username: validations.username,
     password: validations.password
-  }
+  })
 };
 
 router.post("/refresh_token", validate(schema), async function(req, res, next) {

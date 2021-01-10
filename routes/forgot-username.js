@@ -1,6 +1,6 @@
 const config = require("../config/config");
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const knex = require("../src/knex");
 const express = require("express");
@@ -9,9 +9,9 @@ const transporter = require("../src/transporter");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     email: validations.email.required()
-  }
+  })
 };
 
 router.post("/forgot_username", validate(schema), async function(
@@ -23,6 +23,14 @@ router.post("/forgot_username", validate(schema), async function(
     let user = await knex(`${config.db.schema}.${config.db.table}`)
       .where({ email: req.body.email.toLowerCase() })
       .first("*");
+
+    if (!user) {
+      // Don't allow people to crawl emails
+      return res.status(200).send({
+        message: "Username Email sent"
+      });
+    }
+
 
     let mailOptions = {
       from: `"${config.app_name}" <${config.email.from}>`,

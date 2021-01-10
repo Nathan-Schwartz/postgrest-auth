@@ -1,7 +1,7 @@
 const config = require("../config/config");
 const transporter = require("../src/transporter");
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const createToken = require("../src/create-token");
 const knex = require("../src/knex");
@@ -10,11 +10,11 @@ const express = require("express");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     username: validations.username.required(),
     password: validations.password.required(),
     email: validations.email
-  }
+  })
 };
 
 router.post("/users", validate(schema), async function(req, res, next) {
@@ -36,22 +36,22 @@ router.post("/users", validate(schema), async function(req, res, next) {
           return trx
             .raw("CREATE ROLE ??;", usersInserted[0].username_lowercase)
             .then(() => {
+              const p = trx
+                .raw("GRANT ?? TO ??", [
+                  usersInserted[0].username_lowercase,
+                  'authenticator'
+                ]);
+
               if (config.roles.user) {
-                return trx
-                  .raw("GRANT ??, ?? TO ??", [
+                return p.then(() =>
+                  trx .raw("GRANT ?? TO ??", [
                     config.roles.user,
-                    config.roles.anonymous,
                     usersInserted[0].username_lowercase
                   ])
-                  .then(() => usersInserted[0]);
+                ).then(() => usersInserted[0]);
               }
 
-              return trx
-                .raw("GRANT ?? TO ??", [
-                  config.roles.anonymous,
-                  usersInserted[0].username_lowercase
-                ])
-                .then(() => usersInserted[0]);
+              return p .then(() => usersInserted[0]);
             });
         });
     });

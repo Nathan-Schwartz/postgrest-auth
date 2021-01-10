@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const knex = require("../src/knex");
 const express = require("express");
@@ -7,11 +7,11 @@ const express = require("express");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     username: validations.username.required(),
     password: validations.password.required(),
     email: validations.email.required()
-  }
+  })
 };
 
 router.post("/change_email", validate(schema), async function(req, res, next) {

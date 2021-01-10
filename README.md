@@ -6,16 +6,26 @@ It provides the following endpoints:
 
 ```
 POST /auth/users # create a new user and responds with an "access_token"
+  BODY { username password email }
+  RESPONSE { access_token }
 
 POST /auth/refresh_token # returns a new access_token
+  BODY { username password }
+  RESPONSE { access_token }
 
 POST /auth/change_password # changes a user's password and returns a new access_token
+  BODY { username current_password new_password new_password_confirm reset_token }
+  RESPONSE { access_token }
 
 POST /auth/change_email # changes a user's email
+  BODY { username password email }
+  RESPONSE { access_token }
 
 POST /auth/forgot_password # emails a reset_token that can be used to change password
+  BODY { username }
 
 POST /auth/forgot_username # emails the user his or her username
+  BODY { email }
 ```
 
 #### Setup

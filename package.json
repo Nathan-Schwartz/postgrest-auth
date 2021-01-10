@@ -1,6 +1,6 @@
 {
   "name": "postgrest-auth",
-  "version": "0.0.3",
+  "version": "1.0.14",
   "description": "Authorization server for postgREST",
   "bin": {
     "postgrest-auth": "./bin/www"
@@ -20,20 +20,24 @@
   },
   "homepage": "https://github.com/criles25/postgrest-auth",
   "dependencies": {
-    "bcrypt": "^1.0.2",
-    "body-parser": "^1.17.2",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "debug": "^2.6.8",
-    "express": "^4.15.3",
-    "express-bearer-token": "^2.1.0",
-    "express-validation": "^1.0.2",
+    "express": "^4.17.1",
+    "express-bearer-token": "^2.4.0",
+    "express-validation": "^3.0.6",
     "http-status-codes": "^1.1.6",
-    "jsonwebtoken": "^7.4.1",
-    "knex": "^0.13.0",
-    "lodash": "^4.17.4",
+    "joi": "^17.3.0",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.15",
+    "lodash": "^4.17.20",
     "minimist": "^1.2.0",
     "morgan": "^1.8.2",
-    "nodemailer": "^4.0.1",
-    "nodemon": "^1.11.0",
+    "nodemailer": "^6.4.17",
     "pg": "^7.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

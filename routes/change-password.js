@@ -1,8 +1,8 @@
 const config = require("../config/config");
 const createToken = require("../src/create-token");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const validate = require("express-validation");
+const bcrypt = require("bcryptjs");
+const { validate, Joi } = require("express-validation");
 const validations = require("../config/validations");
 const knex = require("../src/knex");
 const express = require("express");
@@ -10,13 +10,13 @@ const express = require("express");
 let router = express.Router();
 
 const schema = {
-  body: {
+  body: Joi.object({
     username: validations.username.required(),
     current_password: validations.password,
     new_password: validations.password.required(),
     new_password_confirm: validations.password.required(),
     reset_token: validations.token
-  }
+  })
 };
 
 router.post("/change_password", validate(schema), async function(

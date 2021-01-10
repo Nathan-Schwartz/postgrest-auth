@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const { Joi } = require("express-validation");
 
 const validations = {
   username: Joi.string().alphanum().min(3).max(20),
